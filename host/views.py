@@ -38,5 +38,37 @@ def index(request):
     }
     return render(request,'host/index.html',{'info': info})
 
+# 需求2:用户访问http://ip/disk/,返回磁盘分区的详细信息
+def disk(request):
+    # 获取系统所有的磁盘分区
+    parts = psutil.disk_partitions()
+    disks = []
+    # 依次遍历获取每个分区的详细信息
+    for part in parts:
+        # 查看当前磁盘分区的使用率
+        usage = psutil.disk_usage(part.device)
+        # 每个分区的详细信息存储到列表中
+        disk = {
+            'device':part.device,
+            'mountpoint':part.mountpoint,
+            'fstype':part.fstype,
+            'opts':part.opts,
+            'total':usage.total,
+            'percent':usage.percent,
+        }
+        disks.append(disk)
+    # 返回html页面信息
+    return render(request,'host/disk.html',{'disks':disks})
 
-
+# 需求3：用户访问http://ip/users/,返回当前登录用户的详细信息
+def users(request):
+    all_users = []
+    users = psutil.users()
+    for user in users:
+        one_user = {
+            'name':user.name,
+            'host':user.host,
+            'started':datetime.fromtimestamp(user.started)
+        }
+        all_users.append(one_user)
+    return render(request,'host/users.html',{'users':all_users})

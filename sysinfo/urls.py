@@ -18,5 +18,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # 用户访问的网址没有特殊设置，读取host子应用里面的路由配置.
     path('',include('host.urls'))
 ]
